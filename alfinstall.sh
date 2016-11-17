@@ -53,6 +53,9 @@ export GOOGLEDOCSSHARE=https://artifacts.alfresco.com/nexus/service/local/reposi
 export AOS_DOWNLOAD=http://dl.alfresco.com/release/community/201609-EA-build-00012/alfresco-aos-module-1.1.3.zip
 export AOS_SERVER_ROOT=https://artifacts.alfresco.com/nexus/service/local/repositories/releases/content/org/alfresco/alfresco-server-root/5.1.g/alfresco-server-root-5.1.g.war
 
+export RM_DOWNLOAD=http://dl.alfresco.com/release/community/5.0.b-build-00092/alfresco-rm-2.3.b.zip
+export ALVEX_DOWNLOAD=http://nexus.itdhq.com/service/local/repositories/snapshots/content/com/alvexcore/alvex/3.0-SNAPSHOT/alvex-3.0-20161117.110754-90.zip
+
 export BASE_BART_DOWNLOAD=https://raw.githubusercontent.com/toniblyx/alfresco-backup-and-recovery-tool/master/src/
 
 export BART_PROPERTIES=alfresco-bart.properties
@@ -302,13 +305,16 @@ if [ "$installtomcat" = "y" ]; then
   echo "It is important that this is is a resolvable server name."
   echo "This information will be added to default configuration files."
   echoblue "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
-  read -e -p "Please enter the public host name for Share server (fully qualified domain name)${ques} [`hostname`] " -i "`hostname`" SHARE_HOSTNAME
-  read -e -p "Please enter the protocol to use for public Share server (http or https)${ques} [http] " -i "http" SHARE_PROTOCOL
-  SHARE_PORT=80
-  if [ "${SHARE_PROTOCOL,,}" = "https" ]; then
-    SHARE_PORT=443
-  fi
+  read -e -p "Please enter the host name for Share Repository server (fully qualified domain name)${ques} [`hostname`] " -i "`hostname`" SHARE_HOSTNAME
+  echoblue "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
   read -e -p "Please enter the host name for Alfresco Repository server (fully qualified domain name)${ques} [$SHARE_HOSTNAME] " -i "$SHARE_HOSTNAME" REPO_HOSTNAME
+  echoblue "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+  read -e -p "Please enter the protocol to use for public Share server (http or https)${ques} [http] " -i "http" SHARE_PROTOCOL
+  echoblue "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+  SHARE_PORT=8080
+  if [ "$SHARE_PROTOCOL" = "https" ]; then
+    SHARE_PORT=8443
+  fi
 
   # Add default alfresco-global.propertis
   ALFRESCO_GLOBAL_PROPERTIES=/tmp/alfrescoinstall/alfresco-global.properties
@@ -680,6 +686,22 @@ if [ "$installgoogledocs" = "y" ]; then
 fi
 fi
 
+echo
+echoblue "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+echo "Install Alfresco Records Management."
+echoblue "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+read -e -p "Install Alfresco Office Services integration${ques} [y/n] " -i "$DEFAULTYESNO" installsrecordsmanagement
+if [ "$installsrecordsmanagement" = "y" ]; then
+	echogreen "Downloading Alfresco Records Management Services bundle..."
+    mkdir -p $TMP_INSTALL/rm
+    sudo curl -# -o $TMP_INSTALL/rm/alfresco-rm.zip $RM_DOWNLOAD
+    echogreen "Expanding file..."
+    cd $TMP_INSTALL/rm
+    sudo unzip -q alfresco-rm.zip
+    sudo mv alfresco-rm-server*.amp $ALF_HOME/addons/alfresco/
+    sudo mv alfresco-rm-share*.amp $ALF_HOME/addons/share/
+fi
+
 
 echo
 echoblue "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
@@ -718,6 +740,51 @@ if [ "$installwar" = "y" ] || [ "$installsharewar" = "y" ] || [ "$installssharep
         sudo $ALF_HOME/addons/apply.sh all
     fi
 fi
+
+echo
+echoblue "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+echo "Alvex is the leading Alfresco-based open-source software solution "
+echo "for adaptive case management, document management, project management "
+echo "and business process management."
+echoblue "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+read -e -p "Install Alvex Solution${ques} [y/n] " -i "$DEFAULTYESNO" installAlvex
+if [ "$installAlvex" = "y" ]; then
+	echogreen "Installing Maven Services bundle..."
+	sudo apt-get $APTVERBOSITY install maven 
+	echogreen "Downloading Alvex Services bundle..."
+    mkdir -p $TMP_INSTALL/alvex
+    sudo curl -# -o $TMP_INSTALL/alvex/alfresco-alvex.zip $ALVEX_DOWNLOAD
+    echogreen "Expanding file..."
+    cd $TMP_INSTALL/alvex
+	sudo chmod a+x alfresco-alvex.zip
+    sudo unzip -q alfresco-alvex.zip
+	
+	sudo mv $TMP_INSTALL/alvex/repo/com.alvexcore.repo.custom*.jar $ALF_HOME/tomcat/webapps/alfresco/WEB-INF/lib/
+	sudo mv $TMP_INSTALL/alvex/repo/com.alvexcore.repo.datagrid*.jar $ALF_HOME/tomcat/webapps/alfresco/WEB-INF/lib/
+	sudo mv $TMP_INSTALL/alvex/repo/com.alvexcore.repo.infavorites*.jar $ALF_HOME/tomcat/webapps/alfresco/WEB-INF/lib/
+	sudo mv $TMP_INSTALL/alvex/repo/com.alvexcore.repo.inform*.jar $ALF_HOME/tomcat/webapps/alfresco/WEB-INF/lib/
+	sudo mv $TMP_INSTALL/alvex/repo/com.alvexcore.repo.manager*.jar $ALF_HOME/tomcat/webapps/alfresco/WEB-INF/lib/
+	sudo mv $TMP_INSTALL/alvex/repo/com.alvexcore.repo.masterdata*.jar $ALF_HOME/tomcat/webapps/alfresco/WEB-INF/lib/
+	sudo mv $TMP_INSTALL/alvex/repo/com.alvexcore.repo.middle*.jar $ALF_HOME/tomcat/webapps/alfresco/WEB-INF/lib/
+	sudo mv $TMP_INSTALL/alvex/repo/com.alvexcore.repo.orgchart*.jar $ALF_HOME/tomcat/webapps/alfresco/WEB-INF/lib/
+	sudo mv $TMP_INSTALL/alvex/repo/com.alvexcore.repo.project*.jar $ALF_HOME/tomcat/webapps/alfresco/WEB-INF/lib/
+	sudo mv $TMP_INSTALL/alvex/repo/com.alvexcore.repo.uploader*.jar $ALF_HOME/tomcat/webapps/alfresco/WEB-INF/lib/
+	sudo mv $TMP_INSTALL/alvex/repo/com.alvexcore.repo.utils*.jar $ALF_HOME/tomcat/webapps/alfresco/WEB-INF/lib/
+	sudo mv $TMP_INSTALL/alvex/repo/com.alvexcore.repo.workflow*.jar $ALF_HOME/tomcat/webapps/alfresco/WEB-INF/lib/
+
+	sudo mv $TMP_INSTALL/alvex/share/com.alvexcore.share.custom*.jar $ALF_HOME/tomcat/webapps/share/WEB-INF/lib/
+	sudo mv $TMP_INSTALL/alvex/share/com.alvexcore.share.datagrid*.jar $ALF_HOME/tomcat/webapps/share/WEB-INF/lib/
+	sudo mv $TMP_INSTALL/alvex/share/com.alvexcore.share.manager*.jar $ALF_HOME/tomcat/webapps/share/WEB-INF/lib/
+	sudo mv $TMP_INSTALL/alvex/share/com.alvexcore.share.masterdata*.jar $ALF_HOME/tomcat/webapps/share/WEB-INF/lib/
+	sudo mv $TMP_INSTALL/alvex/share/com.alvexcore.share.middle*.jar $ALF_HOME/tomcat/webapps/share/WEB-INF/lib/
+	sudo mv $TMP_INSTALL/alvex/share/com.alvexcore.share.orgchart*.jar $ALF_HOME/tomcat/webapps/share/WEB-INF/lib/
+	sudo mv $TMP_INSTALL/alvex/share/com.alvexcore.share.project*.jar $ALF_HOME/tomcat/webapps/share/WEB-INF/lib/
+	sudo mv $TMP_INSTALL/alvex/share/com.alvexcore.share.uploader*.jar $ALF_HOME/tomcat/webapps/share/WEB-INF/lib/
+	sudo mv $TMP_INSTALL/alvex/share/com.alvexcore.share.utils*.jar $ALF_HOME/tomcat/webapps/share/WEB-INF/lib/
+	sudo mv $TMP_INSTALL/alvex/share/com.alvexcore.share.workflow*.jar $ALF_HOME/tomcat/webapps/share/WEB-INF/lib/
+	
+fi
+
 
 echo
 echoblue "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
