@@ -121,7 +121,7 @@ if [ "$installAlvex" = "y" ]; then
     sudo apt-get $APTVERBOSITY install unzip
     echogreen "Expanding file..."
     cd $TMP_INSTALL/alvex
-	sudo chmod u+x alfresco-alvex.zip
+	sudo chown  alfresco-alvex.zip
    	sudo unzip -q alfresco-alvex.zip
 	
 	sudo mv $TMP_INSTALL/alvex/repo/com.alvexcore.repo.custom*.jar $ALF_HOME/tomcat/webapps/alfresco/WEB-INF/lib/
