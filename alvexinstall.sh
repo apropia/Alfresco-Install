@@ -116,12 +116,12 @@ if [ "$installAlvex" = "y" ]; then
 	sudo apt-get $APTVERBOSITY install maven 
 	echogreen "Downloading Alvex Services bundle..."
 	mkdir -p $TMP_INSTALL/alvex
-    sudo curl -# -o $TMP_INSTALL/alvex/alfresco-alvex.zip $ALVEX_DOWNLOAD
-    # Make sure we have unzip available
-    sudo apt-get $APTVERBOSITY install unzip
-    echogreen "Expanding file..."
-    cd $TMP_INSTALL/alvex
-	sudo chown  alfresco-alvex.zip
+    	sudo curl -# -o $TMP_INSTALL/alvex/alfresco-alvex.zip $ALVEX_DOWNLOAD
+    	# Make sure we have unzip available
+    	sudo apt-get $APTVERBOSITY install unzip
+   	echogreen "Expanding file..."
+    	cd $TMP_INSTALL/alvex
+	sudo chmod u+x alfresco-alvex.zip
    	sudo unzip -q alfresco-alvex.zip
 	
 	sudo mv $TMP_INSTALL/alvex/repo/com.alvexcore.repo.custom*.jar $ALF_HOME/tomcat/webapps/alfresco/WEB-INF/lib/
@@ -149,7 +149,7 @@ if [ "$installAlvex" = "y" ]; then
 	sudo mv $TMP_INSTALL/alvex/share/com.alvexcore.share.workflow*.jar $ALF_HOME/tomcat/webapps/share/WEB-INF/lib/
 	
 fi
-
+sudo chown -R $ALF_USER:$ALF_GROUP $CATALINA_HOME/webapps
 
 echo
 echoblue "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
