@@ -180,7 +180,8 @@ URLERROR=0
 
 for REMOTE in $TOMCAT_DOWNLOAD $JDBCPOSTGRESURL/$JDBCPOSTGRES $JDBCMYSQLURL/$JDBCMYSQL \
         $LIBREOFFICE $ALFREPOWAR $ALFSHAREWAR $ALFSHARESERVICES $GOOGLEDOCSREPO \
-        $GOOGLEDOCSSHARE $SOLR4_WAR_DOWNLOAD $SOLR4_CONFIG_DOWNLOAD $AOS_DOWNLOAD $AOS_SERVER_ROOT
+        $GOOGLEDOCSSHARE $SOLR4_WAR_DOWNLOAD $SOLR4_CONFIG_DOWNLOAD $AOS_DOWNLOAD $AOS_SERVER_ROOT \
+	$RM_DOWNLOAD $ALVEX_DOWNLOAD
 
 do
         wget --spider $REMOTE --no-check-certificate >& /dev/null
@@ -688,15 +689,18 @@ fi
 
 echo
 echoblue "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
-echo "Install Alfresco Records Management."
+echo "Add Alfresco Records Management Addon."
 echoblue "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
-read -e -p "Install Alfresco Office Services integration${ques} [y/n] " -i "$DEFAULTYESNO" installsrecordsmanagement
+read -e -p "Install Alfresco Records Management ${ques} [y/n] " -i "$DEFAULTYESNO" installsrecordsmanagement
 if [ "$installsrecordsmanagement" = "y" ]; then
-	echogreen "Downloading Alfresco Records Management Services bundle..."
+	echogreen "Downloading Alfresco Records Management Addons bundle..."
     mkdir -p $TMP_INSTALL/rm
     sudo curl -# -o $TMP_INSTALL/rm/alfresco-rm.zip $RM_DOWNLOAD
+    # Make sure we have unzip available
+    sudo apt-get $APTVERBOSITY install unzip
     echogreen "Expanding file..."
     cd $TMP_INSTALL/rm
+    sudo chmod u+x alfresco-rm.zip
     sudo unzip -q alfresco-rm.zip
     sudo mv alfresco-rm-server*.amp $ALF_HOME/addons/alfresco/
     sudo mv alfresco-rm-share*.amp $ALF_HOME/addons/share/
@@ -752,12 +756,14 @@ if [ "$installAlvex" = "y" ]; then
 	echogreen "Installing Maven Services bundle..."
 	sudo apt-get $APTVERBOSITY install maven 
 	echogreen "Downloading Alvex Services bundle..."
-    mkdir -p $TMP_INSTALL/alvex
-    sudo curl -# -o $TMP_INSTALL/alvex/alfresco-alvex.zip $ALVEX_DOWNLOAD
-    echogreen "Expanding file..."
-    cd $TMP_INSTALL/alvex
-	sudo chmod a+x alfresco-alvex.zip
-    sudo unzip -q alfresco-alvex.zip
+    	mkdir -p $TMP_INSTALL/alvex
+    	sudo curl -# -o $TMP_INSTALL/alvex/alfresco-alvex.zip $ALVEX_DOWNLOAD
+    	# Make sure we have unzip available
+    	sudo apt-get $APTVERBOSITY install unzip
+    	echogreen "Expanding file..."
+    	cd $TMP_INSTALL/alvex
+	sudo chmod u+x alfresco-alvex.zip
+   	sudo unzip -q alfresco-alvex.zip
 	
 	sudo mv $TMP_INSTALL/alvex/repo/com.alvexcore.repo.custom*.jar $ALF_HOME/tomcat/webapps/alfresco/WEB-INF/lib/
 	sudo mv $TMP_INSTALL/alvex/repo/com.alvexcore.repo.datagrid*.jar $ALF_HOME/tomcat/webapps/alfresco/WEB-INF/lib/
