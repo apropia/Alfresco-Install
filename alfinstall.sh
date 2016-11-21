@@ -54,7 +54,6 @@ export AOS_DOWNLOAD=http://dl.alfresco.com/release/community/201609-EA-build-000
 export AOS_SERVER_ROOT=https://artifacts.alfresco.com/nexus/service/local/repositories/releases/content/org/alfresco/alfresco-server-root/5.1.g/alfresco-server-root-5.1.g.war
 
 export RM_DOWNLOAD=http://dl.alfresco.com/release/community/5.0.b-build-00092/alfresco-rm-2.3.b.zip
-export ALVEX_DOWNLOAD=http://nexus.itdhq.com/service/local/repositories/snapshots/content/com/alvexcore/alvex/3.0-SNAPSHOT/alvex-3.0-20161117.110754-90.zip
 
 export BASE_BART_DOWNLOAD=https://raw.githubusercontent.com/toniblyx/alfresco-backup-and-recovery-tool/master/src/
 
@@ -743,52 +742,6 @@ if [ "$installwar" = "y" ] || [ "$installsharewar" = "y" ] || [ "$installssharep
     if [[ "$_java" ]]; then
         sudo $ALF_HOME/addons/apply.sh all
     fi
-fi
-
-echo
-echoblue "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
-echo "Alvex is the leading Alfresco-based open-source software solution "
-echo "for adaptive case management, document management, project management "
-echo "and business process management."
-echoblue "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
-read -e -p "Install Alvex Solution${ques} [y/n] " -i "$DEFAULTYESNO" installAlvex
-if [ "$installAlvex" = "y" ]; then
-	echogreen "Installing Maven Services bundle..."
-	sudo apt-get $APTVERBOSITY install maven 
-	echogreen "Downloading Alvex Services bundle..."
-    	mkdir -p $TMP_INSTALL/alvex
-    	sudo curl -# -o $TMP_INSTALL/alvex/alfresco-alvex.zip $ALVEX_DOWNLOAD
-    	# Make sure we have unzip available
-    	sudo apt-get $APTVERBOSITY install unzip
-    	echogreen "Expanding file..."
-    	cd $TMP_INSTALL/alvex
-	sudo chmod u+x alfresco-alvex.zip
-   	sudo unzip -q alfresco-alvex.zip
-	
-	sudo mv $TMP_INSTALL/alvex/repo/com.alvexcore.repo.custom*.jar $ALF_HOME/tomcat/webapps/alfresco/WEB-INF/lib/
-	sudo mv $TMP_INSTALL/alvex/repo/com.alvexcore.repo.datagrid*.jar $ALF_HOME/tomcat/webapps/alfresco/WEB-INF/lib/
-	sudo mv $TMP_INSTALL/alvex/repo/com.alvexcore.repo.infavorites*.jar $ALF_HOME/tomcat/webapps/alfresco/WEB-INF/lib/
-	sudo mv $TMP_INSTALL/alvex/repo/com.alvexcore.repo.inform*.jar $ALF_HOME/tomcat/webapps/alfresco/WEB-INF/lib/
-	sudo mv $TMP_INSTALL/alvex/repo/com.alvexcore.repo.manager*.jar $ALF_HOME/tomcat/webapps/alfresco/WEB-INF/lib/
-	sudo mv $TMP_INSTALL/alvex/repo/com.alvexcore.repo.masterdata*.jar $ALF_HOME/tomcat/webapps/alfresco/WEB-INF/lib/
-	sudo mv $TMP_INSTALL/alvex/repo/com.alvexcore.repo.middle*.jar $ALF_HOME/tomcat/webapps/alfresco/WEB-INF/lib/
-	sudo mv $TMP_INSTALL/alvex/repo/com.alvexcore.repo.orgchart*.jar $ALF_HOME/tomcat/webapps/alfresco/WEB-INF/lib/
-	sudo mv $TMP_INSTALL/alvex/repo/com.alvexcore.repo.project*.jar $ALF_HOME/tomcat/webapps/alfresco/WEB-INF/lib/
-	sudo mv $TMP_INSTALL/alvex/repo/com.alvexcore.repo.uploader*.jar $ALF_HOME/tomcat/webapps/alfresco/WEB-INF/lib/
-	sudo mv $TMP_INSTALL/alvex/repo/com.alvexcore.repo.utils*.jar $ALF_HOME/tomcat/webapps/alfresco/WEB-INF/lib/
-	sudo mv $TMP_INSTALL/alvex/repo/com.alvexcore.repo.workflow*.jar $ALF_HOME/tomcat/webapps/alfresco/WEB-INF/lib/
-
-	sudo mv $TMP_INSTALL/alvex/share/com.alvexcore.share.custom*.jar $ALF_HOME/tomcat/webapps/share/WEB-INF/lib/
-	sudo mv $TMP_INSTALL/alvex/share/com.alvexcore.share.datagrid*.jar $ALF_HOME/tomcat/webapps/share/WEB-INF/lib/
-	sudo mv $TMP_INSTALL/alvex/share/com.alvexcore.share.manager*.jar $ALF_HOME/tomcat/webapps/share/WEB-INF/lib/
-	sudo mv $TMP_INSTALL/alvex/share/com.alvexcore.share.masterdata*.jar $ALF_HOME/tomcat/webapps/share/WEB-INF/lib/
-	sudo mv $TMP_INSTALL/alvex/share/com.alvexcore.share.middle*.jar $ALF_HOME/tomcat/webapps/share/WEB-INF/lib/
-	sudo mv $TMP_INSTALL/alvex/share/com.alvexcore.share.orgchart*.jar $ALF_HOME/tomcat/webapps/share/WEB-INF/lib/
-	sudo mv $TMP_INSTALL/alvex/share/com.alvexcore.share.project*.jar $ALF_HOME/tomcat/webapps/share/WEB-INF/lib/
-	sudo mv $TMP_INSTALL/alvex/share/com.alvexcore.share.uploader*.jar $ALF_HOME/tomcat/webapps/share/WEB-INF/lib/
-	sudo mv $TMP_INSTALL/alvex/share/com.alvexcore.share.utils*.jar $ALF_HOME/tomcat/webapps/share/WEB-INF/lib/
-	sudo mv $TMP_INSTALL/alvex/share/com.alvexcore.share.workflow*.jar $ALF_HOME/tomcat/webapps/share/WEB-INF/lib/
-	
 fi
 
 
