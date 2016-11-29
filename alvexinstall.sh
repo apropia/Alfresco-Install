@@ -6,7 +6,7 @@
 # Distributed under the Creative Commons Attribution-ShareAlike 3.0 Unported License (CC BY-SA 3.0)
 # -------
 
-export ALF_HOME=/opt/alfresco
+export ALF_HOME=/opt/alfresco_community
 export ALF_DATA_HOME=$ALF_HOME/alf_data
 export CATALINA_HOME=$ALF_HOME/tomcat
 export ALF_USER=alfresco
