@@ -8,6 +8,7 @@ $ sudo chmod u+x alfinstall.sh
 
 $ sudo ./alfinstall.sh
 
+-
 
 To start Alvex Installation, in ubuntu terminal run;
 
@@ -17,6 +18,7 @@ $ sudo chmod u+x alvexinstall.sh
 
 $ sudo ./alvexinstall.sh
 
+-
 
 To update stiles and css of Alfresco for Apropia
 
