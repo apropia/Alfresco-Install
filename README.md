@@ -21,10 +21,15 @@ $ sudo ./alvexinstall.sh
 To update stiles and css of Alfresco for Apropia
 
 $ cd /opt/
+
 $ wget https://github.com/apropia/Alfresco-Ubuntu-Apropia-Install/raw/master/alfresco-community.zip
+
 $ sudo chmod a+x alfresco-community.zip
+
 $ sudo chown alfresco:alfresco alfresco-community.zip
+
 $ sudo unzip alfresco-community.zip
+
 $ sudo rm alfresco-community.zip
 
 
